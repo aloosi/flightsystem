@@ -1,4 +1,4 @@
-module flightsystem
+module github.com/aloosi/flightsystem
 
 go 1.12
 
