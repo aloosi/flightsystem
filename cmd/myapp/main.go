@@ -6,6 +6,7 @@ import (
 	"log"
 
 	_ "github.com/godror/godror"
+	// "github.com/aloosi/flightsystem/cmd/myapp/models"
 )
 
 var db *sql.DB
