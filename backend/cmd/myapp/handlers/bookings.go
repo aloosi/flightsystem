@@ -3,119 +3,96 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/aloosi/flightsystem/cmd/myapp/database"
 	"github.com/aloosi/flightsystem/cmd/myapp/models"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 // CreateBookingHandler handles the creation of a new booking.
-func CreateBookingHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CreateBookingHandler(c *gin.Context, db *sql.DB) {
 	var booking models.Booking
-	if err := json.NewDecoder(r.Body).Decode(&booking); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&booking); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
 	err := database.CreateBooking(booking, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error creating booking: %v", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error creating booking: %v", err)})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	c.Status(http.StatusCreated)
 }
 
 // GetAllBookingsHandler handles the retrieval of all bookings.
-func GetAllBookingsHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetAllBookingsHandler(c *gin.Context, db *sql.DB) {
 	bookings, err := database.GetAllBookings(db)
 	if err != nil {
-		http.Error(w, "Error getting bookings", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting bookings"})
 		return
 	}
 
-	response, err := json.Marshal(bookings)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	// Convert bookings to JSON and send the response
+	c.JSON(http.StatusOK, bookings)
 }
 
 // GetBookingByIDHandler handles the retrieval of a booking by ID.
-func GetBookingByIDHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	vars := mux.Vars(r)
-	bookingIDStr, ok := vars["booking_id"]
-	if !ok {
-		http.Error(w, "Booking ID not provided", http.StatusBadRequest)
-		return
-	}
-
+func GetBookingByIDHandler(c *gin.Context, db *sql.DB) {
+	// Extract bookingID from the request parameters
+	bookingIDStr := c.Param("booking_id")
 	bookingID, err := strconv.Atoi(bookingIDStr)
 	if err != nil {
-		http.Error(w, "Invalid booking ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID"})
 		return
 	}
 
 	booking, err := database.GetBookingByID(bookingID, db)
 	if err != nil {
-		http.Error(w, "Error getting booking", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting booking"})
 		return
 	}
 
-	response, err := json.Marshal(booking)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	// Convert booking to JSON and send the response
+	c.JSON(http.StatusOK, booking)
 }
 
 // UpdateBookingHandler handles the update of an existing booking.
-func UpdateBookingHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func UpdateBookingHandler(c *gin.Context, db *sql.DB) {
 	var booking models.Booking
-	if err := json.NewDecoder(r.Body).Decode(&booking); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&booking); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
 	err := database.UpdateBooking(booking, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error updating booking: %v", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error updating booking: %v", err)})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }
 
 // DeleteBookingHandler handles the deletion of a booking by ID.
-func DeleteBookingHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	vars := mux.Vars(r)
-	bookingIDStr, ok := vars["booking_id"]
-	if !ok {
-		http.Error(w, "Booking ID not provided", http.StatusBadRequest)
-		return
-	}
-
+func DeleteBookingHandler(c *gin.Context, db *sql.DB) {
+	// Extract bookingID from the request parameters
+	bookingIDStr := c.Param("booking_id")
 	bookingID, err := strconv.Atoi(bookingIDStr)
 	if err != nil {
-		http.Error(w, "Invalid booking ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID"})
 		return
 	}
 
 	err = database.DeleteBooking(bookingID, db)
 	if err != nil {
-		http.Error(w, "Error deleting booking", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting booking"})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }

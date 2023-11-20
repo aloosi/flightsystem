@@ -3,21 +3,24 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/aloosi/flightsystem/cmd/myapp/database"
 	"github.com/aloosi/flightsystem/cmd/myapp/models"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 // CreateFlightHandler handles the creation of a new flight.
-func CreateFlightHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CreateFlightHandler(c *gin.Context, db *sql.DB) {
 	var flight models.FlightInfo
-	if err := json.NewDecoder(r.Body).Decode(&flight); err != nil {
-		http.Error(w, fmt.Sprintf("Invalid request payload: %v", err), http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&flight); err != nil {
+		// Log the received payload and the error
+		fmt.Printf("Received flight payload: %+v\n", flight)
+		fmt.Printf("Error parsing JSON payload: %v\n", err)
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
@@ -26,92 +29,83 @@ func CreateFlightHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Call the createFlight function (you need to implement this function)
 	err := database.CreateFlight(flight, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error creating flight: %v", err), http.StatusInternalServerError)
+		// Log the error during database creation
+		fmt.Printf("Error creating flight: %v\n", err)
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error creating flight: %v", err)})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	c.Status(http.StatusCreated)
 }
 
 // GetAllFlightsHandler handles the retrieval of all flights.
-func GetAllFlightsHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetAllFlightsHandler(c *gin.Context, db *sql.DB) {
 	flights, err := database.GetAllFlights(db)
 	if err != nil {
-		http.Error(w, "Error getting flights", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting flights"})
 		return
 	}
 
 	// Convert flights to JSON and send the response
-	response, err := json.Marshal(flights)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, flights)
 }
 
 // GetFlightByIDHandler handles the retrieval of a flight by ID.
-func GetFlightByIDHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetFlightByIDHandler(c *gin.Context, db *sql.DB) {
 	// Extract flightID from the request parameters
-	flightID, err := strconv.Atoi(mux.Vars(r)["flight_id"])
+	flightIDStr := c.Param("flight_id")
+	flightID, err := strconv.Atoi(flightIDStr)
 	if err != nil {
-		http.Error(w, "Invalid flight ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid flight ID"})
 		return
 	}
 
 	// Call the GetFlightByID function
 	flight, err := database.GetFlightByID(flightID, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error getting flight by ID: %v", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error getting flight by ID: %v", err)})
 		return
 	}
 
 	// Convert flight to JSON and send the response
-	response, err := json.Marshal(flight)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, flight)
 }
 
 // UpdateFlightHandler handles the update of an existing flight.
-func UpdateFlightHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func UpdateFlightHandler(c *gin.Context, db *sql.DB) {
 	var flight models.FlightInfo
-	if err := json.NewDecoder(r.Body).Decode(&flight); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&flight); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
 	// Call the UpdateFlight function
 	err := database.UpdateFlight(flight, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error updating flight: %v", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error updating flight: %v", err)})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }
 
 // DeleteFlightHandler handles the deletion of a flight by ID.
-func DeleteFlightHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func DeleteFlightHandler(c *gin.Context, db *sql.DB) {
 	// Extract flightID from the request parameters
-	flightID, err := strconv.Atoi(mux.Vars(r)["flight_id"])
+	flightIDStr := c.Param("flight_id")
+	flightID, err := strconv.Atoi(flightIDStr)
 	if err != nil {
-		http.Error(w, "Invalid flight ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid flight ID"})
 		return
 	}
 
 	// Call the DeleteFlight function
 	err = database.DeleteFlight(flightID, db)
 	if err != nil {
-		http.Error(w, "Error deleting flight", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting flight"})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }

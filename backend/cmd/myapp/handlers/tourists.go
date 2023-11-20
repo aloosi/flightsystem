@@ -3,7 +3,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,102 +10,72 @@ import (
 
 	"github.com/aloosi/flightsystem/cmd/myapp/database"
 	"github.com/aloosi/flightsystem/cmd/myapp/models"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 // CreateTouristHandler handles the creation of a new tourist.
-func CreateTouristHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CreateTouristHandler(c *gin.Context, db *sql.DB) {
 	var tourist models.Tourist
-	if err := json.NewDecoder(r.Body).Decode(&tourist); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&tourist); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
-	// Print the decoded tourist struct for debugging
-	fmt.Printf("Decoded Tourist: %+v\n", tourist)
+	// Log the received tourist data
+	log.Printf("Received CreateTourist request: %+v\n", tourist)
 
 	// Call the CreateTourist function
 	err := database.CreateTourist(tourist, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error creating tourist: %s", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error creating tourist: %s", err)})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	c.Status(http.StatusCreated)
 }
 
-/* func CreateTouristHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var tourist models.Tourist
-	if err := json.NewDecoder(r.Body).Decode(&tourist); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-
-	// Call the createTourist function (you need to implement this function in the database package)
-	err := database.CreateTourist(tourist, db)
-	if err != nil {
-		http.Error(w, "Error creating tourist", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
-} */
-
 // GetAllTouristsHandler handles the retrieval of all tourists.
-func GetAllTouristsHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetAllTouristsHandler(c *gin.Context, db *sql.DB) {
 	log.Println("Received GET request for all tourists") // logging
 	tourists, err := database.GetAllTourists(db)
 	if err != nil {
 		log.Println("Error getting tourists:", err) // logging
-		http.Error(w, "Error getting tourists", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting tourists"})
 		return
 	}
+	// Log the number of tourists retrieved
+	log.Printf("Number of tourists retrieved: %d\n", len(tourists))
 
 	// Convert tourists to JSON and send the response
-	response, err := json.Marshal(tourists)
-	if err != nil {
-		log.Println("Error encoding response:", err)
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, tourists)
 }
 
 // GetTouristByIDHandler handles the retrieval of a tourist by ID.
-func GetTouristByIDHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetTouristByIDHandler(c *gin.Context, db *sql.DB) {
 	// Extract touristID from the request parameters
-	touristID, err := strconv.Atoi(mux.Vars(r)["touristID"])
+	touristID, err := strconv.Atoi(c.Param("tourist_id"))
 	if err != nil {
-		http.Error(w, "Invalid tourist ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tourist ID"})
 		return
 	}
 
 	// Call the GetTouristByID function
 	tourist, err := database.GetTouristByID(touristID, db)
 	if err != nil {
-		http.Error(w, "Error getting tourist by ID", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting tourist by ID"})
 		return
 	}
 
 	// Convert tourist to JSON and send the response
-	response, err := json.Marshal(tourist)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, tourist)
 }
 
 // UpdateTouristHandler handles the update of an existing tourist.
-func UpdateTouristHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func UpdateTouristHandler(c *gin.Context, db *sql.DB) {
 	log.Println("Received PUT request to update tourist") // logging
 	var tourist models.Tourist
-	if err := json.NewDecoder(r.Body).Decode(&tourist); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&tourist); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
@@ -114,28 +83,28 @@ func UpdateTouristHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := database.UpdateTourist(tourist, db)
 	if err != nil {
 		log.Println("Error updating tourist:", err)
-		http.Error(w, "Error updating tourist", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating tourist"})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }
 
 // DeleteTouristHandler handles the deletion of a tourist by ID.
-func DeleteTouristHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func DeleteTouristHandler(c *gin.Context, db *sql.DB) {
 	// Extract touristID from the request parameters
-	touristID, err := strconv.Atoi(mux.Vars(r)["touristID"])
+	touristID, err := strconv.Atoi(c.Param("tourist_id"))
 	if err != nil {
-		http.Error(w, "Invalid tourist ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tourist ID"})
 		return
 	}
 
 	// Call the DeleteTourist function
 	err = database.DeleteTourist(touristID, db)
 	if err != nil {
-		http.Error(w, "Error deleting tourist", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting tourist"})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }

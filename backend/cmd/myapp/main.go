@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/aloosi/flightsystem/cmd/myapp/handlers"
+	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
-	"github.com/gorilla/mux"
 )
 
 var db *sql.DB
@@ -30,7 +30,26 @@ func init() {
 	log.Println("Connected to the Oracle database")
 }
 
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	}
+}
+
 func main() {
+	// Create a new Gin router
+	r := gin.Default()
+
+	// Use the CORS middleware
+	r.Use(CORSMiddleware())
+
 	// Connection string format: user/password@host:port/service_name
 	connectionString := "admin/Alpaca!1@flight-system.cgaeqxpmrjpp.us-east-2.rds.amazonaws.com:1521/ORCL"
 
@@ -51,139 +70,139 @@ func main() {
 		log.Fatal(err)
 	} */
 
-	r := mux.NewRouter()
+	// r := mux.NewRouter()
 
-	createTouristHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateTouristHandler(w, r, db)
+	createTouristHandler := func(c *gin.Context) {
+		handlers.CreateTouristHandler(c, db)
 	}
-	getAllTouristsHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAllTouristsHandler(w, r, db)
+	getAllTouristsHandler := func(c *gin.Context) {
+		handlers.GetAllTouristsHandler(c, db)
 	}
-	getTouristByIDHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetTouristByIDHandler(w, r, db)
+	getTouristByIDHandler := func(c *gin.Context) {
+		handlers.GetTouristByIDHandler(c, db)
 	}
-	updateTouristHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateTouristHandler(w, r, db)
+	updateTouristHandler := func(c *gin.Context) {
+		handlers.UpdateTouristHandler(c, db)
 	}
-	deleteTouristHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteTouristHandler(w, r, db)
-	}
-
-	createPaymentMethodHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreatePaymentMethodHandler(w, r, db)
-	}
-	getAllPaymentMethodsHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAllPaymentMethodsHandler(w, r, db)
-	}
-	getPaymentMethodByIDHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetPaymentMethodByIDHandler(w, r, db)
-	}
-	updatePaymentMethodHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdatePaymentMethodHandler(w, r, db)
-	}
-	deletePaymentMethodHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeletePaymentMethodHandler(w, r, db)
+	deleteTouristHandler := func(c *gin.Context) {
+		handlers.DeleteTouristHandler(c, db)
 	}
 
-	createAirlineHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateAirlineHandler(w, r, db)
+	createPaymentMethodHandler := func(c *gin.Context) {
+		handlers.CreatePaymentMethodHandler(c, db)
 	}
-	getAllAirlinesHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAllAirlinesHandler(w, r, db)
+	getAllPaymentMethodsHandler := func(c *gin.Context) {
+		handlers.GetAllPaymentMethodsHandler(c, db)
 	}
-	getAirlineByIDHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAirlineByIDHandler(w, r, db)
+	getPaymentMethodByIDHandler := func(c *gin.Context) {
+		handlers.GetPaymentMethodByIDHandler(c, db)
 	}
-	updateAirlineHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateAirlineHandler(w, r, db)
+	updatePaymentMethodHandler := func(c *gin.Context) {
+		handlers.UpdatePaymentMethodHandler(c, db)
 	}
-	deleteAirlineHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteAirlineHandler(w, r, db)
-	}
-
-	createFlightHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateFlightHandler(w, r, db)
-	}
-	getAllFlightsHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAllFlightsHandler(w, r, db)
-	}
-	getFlightByIDHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetFlightByIDHandler(w, r, db)
-	}
-	updateFlightHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateFlightHandler(w, r, db)
-	}
-	deleteFlightHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteFlightHandler(w, r, db)
+	deletePaymentMethodHandler := func(c *gin.Context) {
+		handlers.DeletePaymentMethodHandler(c, db)
 	}
 
-	createBookingHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateBookingHandler(w, r, db)
+	createAirlineHandler := func(c *gin.Context) {
+		handlers.CreateAirlineHandler(c, db)
 	}
-	getAllBookingsHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAllBookingsHandler(w, r, db)
+	getAllAirlinesHandler := func(c *gin.Context) {
+		handlers.GetAllAirlinesHandler(c, db)
 	}
-	getBookingByIDHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetBookingByIDHandler(w, r, db)
+	getAirlineByIDHandler := func(c *gin.Context) {
+		handlers.GetAirlineByIDHandler(c, db)
 	}
-	updateBookingHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateBookingHandler(w, r, db)
+	updateAirlineHandler := func(c *gin.Context) {
+		handlers.UpdateAirlineHandler(c, db)
 	}
-	deleteBookingHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteBookingHandler(w, r, db)
-	}
-
-	createReviewHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateReviewHandler(w, r, db)
-	}
-	getAllReviewsHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAllReviewsHandler(w, r, db)
-	}
-	getReviewByIDHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetReviewByIDHandler(w, r, db)
-	}
-	updateReviewHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateReviewHandler(w, r, db)
-	}
-	deleteReviewHandler := func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteReviewHandler(w, r, db)
+	deleteAirlineHandler := func(c *gin.Context) {
+		handlers.DeleteAirlineHandler(c, db)
 	}
 
-	r.HandleFunc("/create-tourist", createTouristHandler).Methods("POST")
-	r.HandleFunc("/get-all-tourists", getAllTouristsHandler).Methods("GET")
-	r.HandleFunc("/get-tourist-by-id/{touristID:[0-9]+}", getTouristByIDHandler).Methods("GET")
-	r.HandleFunc("/update-tourist", updateTouristHandler).Methods("PUT")
-	r.HandleFunc("/delete-tourist/{touristID:[0-9]+}", deleteTouristHandler).Methods("DELETE")
+	createFlightHandler := func(c *gin.Context) {
+		handlers.CreateFlightHandler(c, db)
+	}
+	getAllFlightsHandler := func(c *gin.Context) {
+		handlers.GetAllFlightsHandler(c, db)
+	}
+	getFlightByIDHandler := func(c *gin.Context) {
+		handlers.GetFlightByIDHandler(c, db)
+	}
+	updateFlightHandler := func(c *gin.Context) {
+		handlers.UpdateFlightHandler(c, db)
+	}
+	deleteFlightHandler := func(c *gin.Context) {
+		handlers.DeleteFlightHandler(c, db)
+	}
 
-	r.HandleFunc("/create-payment-method", createPaymentMethodHandler).Methods("POST")
-	r.HandleFunc("/get-all-payment-methods", getAllPaymentMethodsHandler).Methods("GET")
-	r.HandleFunc("/get-payment-method-by-id/{payment_id:[0-9]+}", getPaymentMethodByIDHandler).Methods("GET")
-	r.HandleFunc("/update-payment-method", updatePaymentMethodHandler).Methods("PUT")
-	r.HandleFunc("/delete-payment-method/{payment_id:[0-9]+}", deletePaymentMethodHandler).Methods("DELETE")
+	createBookingHandler := func(c *gin.Context) {
+		handlers.CreateBookingHandler(c, db)
+	}
+	getAllBookingsHandler := func(c *gin.Context) {
+		handlers.GetAllBookingsHandler(c, db)
+	}
+	getBookingByIDHandler := func(c *gin.Context) {
+		handlers.GetBookingByIDHandler(c, db)
+	}
+	updateBookingHandler := func(c *gin.Context) {
+		handlers.UpdateBookingHandler(c, db)
+	}
+	deleteBookingHandler := func(c *gin.Context) {
+		handlers.DeleteBookingHandler(c, db)
+	}
 
-	r.HandleFunc("/create-airline", createAirlineHandler).Methods("POST")
-	r.HandleFunc("/get-all-airlines", getAllAirlinesHandler).Methods("GET")
-	r.HandleFunc("/get-airline-by-id/{airline_id:[0-9]+}", getAirlineByIDHandler).Methods("GET")
-	r.HandleFunc("/update-airline", updateAirlineHandler).Methods("PUT")
-	r.HandleFunc("/delete-airline/{airline_id:[0-9]+}", deleteAirlineHandler).Methods("DELETE")
+	createReviewHandler := func(c *gin.Context) {
+		handlers.CreateReviewHandler(c, db)
+	}
+	getAllReviewsHandler := func(c *gin.Context) {
+		handlers.GetAllReviewsHandler(c, db)
+	}
+	getReviewByIDHandler := func(c *gin.Context) {
+		handlers.GetReviewByIDHandler(c, db)
+	}
+	updateReviewHandler := func(c *gin.Context) {
+		handlers.UpdateReviewHandler(c, db)
+	}
+	deleteReviewHandler := func(c *gin.Context) {
+		handlers.DeleteReviewHandler(c, db)
+	}
 
-	r.HandleFunc("/create-flight", createFlightHandler).Methods("POST")
-	r.HandleFunc("/get-all-flights", getAllFlightsHandler).Methods("GET")
-	r.HandleFunc("/get-flight-by-id/{flight_id:[0-9]+}", getFlightByIDHandler).Methods("GET")
-	r.HandleFunc("/update-flight", updateFlightHandler).Methods("PUT")
-	r.HandleFunc("/delete-flight/{flight_id:[0-9]+}", deleteFlightHandler).Methods("DELETE")
+	r.POST("/create-tourist", createTouristHandler)
+	r.GET("/get-all-tourists", getAllTouristsHandler)
+	r.GET("/get-tourist-by-id/:tourist_id", getTouristByIDHandler)
+	r.PUT("/update-tourist", updateTouristHandler)
+	r.DELETE("/delete-tourist/:tourist_id", deleteTouristHandler)
 
-	r.HandleFunc("/create-booking", createBookingHandler).Methods("POST")
-	r.HandleFunc("/get-all-bookings", getAllBookingsHandler).Methods("GET")
-	r.HandleFunc("/get-booking-by-id/{booking_id:[0-9]+}", getBookingByIDHandler).Methods("GET")
-	r.HandleFunc("/update-booking", updateBookingHandler).Methods("PUT")
-	r.HandleFunc("/delete-booking/{booking_id:[0-9]+}", deleteBookingHandler).Methods("DELETE")
+	r.POST("/create-payment-method", createPaymentMethodHandler)
+	r.GET("/get-all-payment-methods", getAllPaymentMethodsHandler)
+	r.GET("/get-payment-method-by-id/:payment_id", getPaymentMethodByIDHandler)
+	r.PUT("/update-payment-method", updatePaymentMethodHandler)
+	r.DELETE("/delete-payment-method/:payment_id", deletePaymentMethodHandler)
 
-	r.HandleFunc("/create-review", createReviewHandler).Methods("POST")
-	r.HandleFunc("/get-all-reviews", getAllReviewsHandler).Methods("GET")
-	r.HandleFunc("/get-review-by-id/{review_id:[0-9]+}", getReviewByIDHandler).Methods("GET")
-	r.HandleFunc("/update-review", updateReviewHandler).Methods("PUT")
-	r.HandleFunc("/delete-review/{review_id:[0-9]+}", deleteReviewHandler).Methods("DELETE")
+	r.POST("/create-airline", createAirlineHandler)
+	r.GET("/get-all-airlines", getAllAirlinesHandler)
+	r.GET("/get-airline-by-id/:airline_id", getAirlineByIDHandler)
+	r.PUT("/update-airline", updateAirlineHandler)
+	r.DELETE("/delete-airline/:airline_id", deleteAirlineHandler)
+
+	r.POST("/create-flight", createFlightHandler)
+	r.GET("/get-all-flights", getAllFlightsHandler)
+	r.GET("/get-flight-by-id/:flight_id", getFlightByIDHandler)
+	r.PUT("/update-flight", updateFlightHandler)
+	r.DELETE("/delete-flight/:flight_id", deleteFlightHandler)
+
+	r.POST("/create-booking", createBookingHandler)
+	r.GET("/get-all-bookings", getAllBookingsHandler)
+	r.GET("/get-booking-by-id/:booking_id", getBookingByIDHandler)
+	r.PUT("/update-booking", updateBookingHandler)
+	r.DELETE("/delete-booking/:booking_id", deleteBookingHandler)
+
+	r.POST("/create-review", createReviewHandler)
+	r.GET("/get-all-reviews", getAllReviewsHandler)
+	r.GET("/get-review-by-id/:review_id", getReviewByIDHandler)
+	r.PUT("/update-review", updateReviewHandler)
+	r.DELETE("/delete-review/:review_id", deleteReviewHandler)
 
 	// Start the HTTP server with error handling
 	err = http.ListenAndServe(":8080", r)

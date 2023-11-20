@@ -3,119 +3,92 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/aloosi/flightsystem/cmd/myapp/database"
 	"github.com/aloosi/flightsystem/cmd/myapp/models"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 // CreateReviewHandler handles the creation of a new review.
-func CreateReviewHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CreateReviewHandler(c *gin.Context, db *sql.DB) {
 	var review models.Reviews
-	if err := json.NewDecoder(r.Body).Decode(&review); err != nil {
-		http.Error(w, fmt.Sprintf("Invalid request payload: %v", err), http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&review); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid request payload: %v", err)})
 		return
 	}
 
 	err := database.CreateReview(review, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error creating review: %v", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error creating review: %v", err)})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	c.Status(http.StatusCreated)
 }
 
 // GetAllReviewsHandler handles the retrieval of all reviews.
-func GetAllReviewsHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetAllReviewsHandler(c *gin.Context, db *sql.DB) {
 	reviews, err := database.GetAllReviews(db)
 	if err != nil {
-		http.Error(w, "Error getting reviews", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting reviews"})
 		return
 	}
 
-	response, err := json.Marshal(reviews)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, reviews)
 }
 
 // GetReviewByIDHandler handles the retrieval of a review by ID.
-func GetReviewByIDHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	vars := mux.Vars(r)
-	reviewIDStr, ok := vars["review_id"]
-	if !ok {
-		http.Error(w, "Review ID not provided", http.StatusBadRequest)
-		return
-	}
-
+func GetReviewByIDHandler(c *gin.Context, db *sql.DB) {
+	reviewIDStr := c.Param("review_id")
 	reviewID, err := strconv.Atoi(reviewIDStr)
 	if err != nil {
-		http.Error(w, "Invalid review ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid review ID"})
 		return
 	}
 
 	review, err := database.GetReviewByID(reviewID, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error getting review: %v", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error getting review: %v", err)})
 		return
 	}
 
-	response, err := json.Marshal(review)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, review)
 }
 
 // UpdateReviewHandler handles the update of an existing review.
-func UpdateReviewHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func UpdateReviewHandler(c *gin.Context, db *sql.DB) {
 	var review models.Reviews
-	if err := json.NewDecoder(r.Body).Decode(&review); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&review); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
 	err := database.UpdateReview(review, db)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error updating review: %v", err), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error updating review: %v", err)})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }
 
 // DeleteReviewHandler handles the deletion of a review by ID.
-func DeleteReviewHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	vars := mux.Vars(r)
-	reviewIDStr, ok := vars["review_id"]
-	if !ok {
-		http.Error(w, "Review ID not provided", http.StatusBadRequest)
-		return
-	}
-
+func DeleteReviewHandler(c *gin.Context, db *sql.DB) {
+	reviewIDStr := c.Param("review_id")
 	reviewID, err := strconv.Atoi(reviewIDStr)
 	if err != nil {
-		http.Error(w, "Invalid review ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid review ID"})
 		return
 	}
 
 	err = database.DeleteReview(reviewID, db)
 	if err != nil {
-		http.Error(w, "Error deleting review", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting review"})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }

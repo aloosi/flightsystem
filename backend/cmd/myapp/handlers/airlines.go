@@ -3,112 +3,99 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/aloosi/flightsystem/cmd/myapp/database"
 	"github.com/aloosi/flightsystem/cmd/myapp/models"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 // CreateAirlineHandler handles the creation of a new airline.
-func CreateAirlineHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CreateAirlineHandler(c *gin.Context, db *sql.DB) {
 	var airline models.AirlineInfo
-	if err := json.NewDecoder(r.Body).Decode(&airline); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&airline); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
 	// Call the createAirline function (you need to implement this function in the database package)
 	err := database.CreateAirline(airline, db)
 	if err != nil {
-		http.Error(w, "Error creating airline", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating airline"})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	c.Status(http.StatusCreated)
 }
 
 // GetAllAirlinesHandler handles the retrieval of all airlines.
-func GetAllAirlinesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetAllAirlinesHandler(c *gin.Context, db *sql.DB) {
 	airlines, err := database.GetAllAirlines(db)
 	if err != nil {
-		http.Error(w, "Error getting airlines", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting airlines"})
 		return
 	}
 
 	// Convert airlines to JSON and send the response
-	response, err := json.Marshal(airlines)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, airlines)
 }
 
 // GetAirlineByIDHandler handles the retrieval of an airline by ID.
-func GetAirlineByIDHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetAirlineByIDHandler(c *gin.Context, db *sql.DB) {
 	// Extract airlineID from the request parameters
-	airlineID, err := strconv.Atoi(mux.Vars(r)["airline_id"])
+	airlineIDStr := c.Param("airline_id")
+	airlineID, err := strconv.Atoi(airlineIDStr)
 	if err != nil {
-		http.Error(w, "Invalid airline ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid airline ID"})
 		return
 	}
 
 	// Call the GetAirlineByID function
 	airline, err := database.GetAirlineByID(airlineID, db)
 	if err != nil {
-		http.Error(w, "Error getting airline by ID", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting airline by ID"})
 		return
 	}
 
 	// Convert airline to JSON and send the response
-	response, err := json.Marshal(airline)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	c.JSON(http.StatusOK, airline)
 }
 
 // UpdateAirlineHandler handles the update of an existing airline.
-func UpdateAirlineHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func UpdateAirlineHandler(c *gin.Context, db *sql.DB) {
 	var airline models.AirlineInfo
-	if err := json.NewDecoder(r.Body).Decode(&airline); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&airline); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
 	// Call the UpdateAirline function
 	err := database.UpdateAirline(airline, db)
 	if err != nil {
-		http.Error(w, "Error updating airline", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating airline"})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }
 
 // DeleteAirlineHandler handles the deletion of an airline by ID.
-func DeleteAirlineHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func DeleteAirlineHandler(c *gin.Context, db *sql.DB) {
 	// Extract airlineID from the request parameters
-	airlineID, err := strconv.Atoi(mux.Vars(r)["airline_id"])
+	airlineIDStr := c.Param("airline_id")
+	airlineID, err := strconv.Atoi(airlineIDStr)
 	if err != nil {
-		http.Error(w, "Invalid airline ID", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid airline ID"})
 		return
 	}
 
 	// Call the DeleteAirline function
 	err = database.DeleteAirline(airlineID, db)
 	if err != nil {
-		http.Error(w, "Error deleting airline", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting airline"})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	c.Status(http.StatusOK)
 }
