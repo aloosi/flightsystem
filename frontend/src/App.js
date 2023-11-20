@@ -30,6 +30,11 @@ import GetAllReviews from './components/Reviews/GetAllReviews';
 import GetReviewByID from './components/Reviews/GetReviewByID';
 import UpdateReview from './components/Reviews/UpdateReview';
 
+import CreatePayment from './components/Payments/CreatePayment';
+import DeletePayment from './components/Payments/DeletePayment';
+import GetAllPayments from './components/Payments/GetAllPayments';
+import GetPaymentByID from './components/Payments/GetPaymentByID';
+import UpdatePayment from './components/Payments/UpdatePayment';
 
 const App = () => {
   return (
@@ -177,6 +182,36 @@ const App = () => {
         <Route path="/reviews/get-all-reviews" element={<GetAllReviews />} />
         <Route path="/reviews/get-review-by-id" element={<GetReviewByID />} />
         <Route path="/reviews/update-review" element={<UpdateReview />} />
+
+
+
+        {/* Add routes for other CRUD operations */}
+        </Routes>
+      </div>
+
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/payments/create-payment">Create Payment</Link>
+              <Link to="/payments/delete-payment">Delete Payment</Link>
+              <Link to="/payments/get-all-payments">Get All Payments</Link>
+              <Link to="/payments/get-payment-by-id">Get Payment By ID</Link>
+              <Link to="/payments/update-payment">Update Payment</Link>
+
+
+            </li>
+            {/* Add links for other CRUD operations */}
+          </ul>
+        </nav>
+
+        <hr />
+        <Routes>
+        <Route path="/payments/create-payment" element={<CreatePayment />} />
+        <Route path="/payments/delete-payment" element={<DeletePayment />} />
+        <Route path="/payments/get-all-payments" element={<GetAllPayments />} />
+        <Route path="/payments/get-payment-by-id" element={<GetPaymentByID />} />
+        <Route path="/payments/update-payment" element={<UpdatePayment />} />
 
 
 
