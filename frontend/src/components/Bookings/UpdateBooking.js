@@ -11,7 +11,7 @@ const UpdateBooking = () => {
 
   const handleUpdateBooking = async () => {
     try {
-      const response = await fetch('http://localhost:8080/update-booking', {
+      const response = await fetch('http://3.134.76.216:8080/update-booking', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

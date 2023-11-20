@@ -9,7 +9,7 @@ const GetBookingByID = () => {
 
   const handleGetBookingByID = async () => {
     try {
-      const response = await fetch('http://localhost:8080/get-booking-by-id/' + formData.booking_id,{
+      const response = await fetch('http://3.134.76.216:8080/get-booking-by-id/' + formData.booking_id,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -9,7 +9,7 @@ const GetReviewByID = () => {
 
   const handleGetReviewByID = async () => {
     try {
-      const response = await fetch('http://localhost:8080/get-review-by-id/' + formData.review_id,{
+      const response = await fetch('http://3.134.76.216:8080/get-review-by-id/' + formData.review_id,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

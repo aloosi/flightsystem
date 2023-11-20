@@ -9,7 +9,7 @@ const DeleteFlight = () => {
 
   const handleDeleteFlight = async () => {
     try {
-      const response = await fetch('http://localhost:8080/delete-flight/' + formData.flight_id, {
+      const response = await fetch('http://3.134.76.216:8080/delete-flight/' + formData.flight_id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

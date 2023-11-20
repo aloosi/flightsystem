@@ -13,7 +13,7 @@ const UpdateTourist = () => {
 
   const handleUpdateTourist = async () => {
     try {
-      const response = await fetch('http://localhost:8080/update-tourist', {
+      const response = await fetch('http://3.134.76.216:8080/update-tourist', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

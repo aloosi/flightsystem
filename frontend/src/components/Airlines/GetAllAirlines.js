@@ -9,7 +9,7 @@ const GetAllAirlines = () => {
 
   const handleGetAllAirlines = async () => {
     try {
-      const response = await fetch('http://localhost:8080/get-all-airlines',{
+      const response = await fetch('http://3.134.76.216:8080/get-all-airlines',{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

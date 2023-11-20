@@ -9,7 +9,7 @@ const GetAllBookings = () => {
 
   const handleGetAllBookings = async () => {
     try {
-      const response = await fetch('http://localhost:8080/get-all-bookings',{
+      const response = await fetch('http://3.134.76.216:8080/get-all-bookings',{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

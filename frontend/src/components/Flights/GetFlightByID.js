@@ -9,7 +9,7 @@ const GetFlightByID = () => {
 
   const handleGetFlightByID = async () => {
     try {
-      const response = await fetch('http://localhost:8080/get-flight-by-id/' + formData.flight_id,{
+      const response = await fetch('http://3.134.76.216:8080/get-flight-by-id/' + formData.flight_id,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
