@@ -1,15 +1,15 @@
-// GetReviewByID.js
-
 import React, { useState } from 'react';
 
 const GetReviewByID = () => {
+  const [reviewData, setReviewData] = useState(null);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     review_id: '',
   });
 
   const handleGetReviewByID = async () => {
     try {
-      const response = await fetch('http://3.134.76.216:8080/get-review-by-id/' + formData.review_id,{
+      const response = await fetch(`http://3.134.76.216:8080/get-review-by-id/${formData.review_id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -18,16 +18,16 @@ const GetReviewByID = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Review deleted successfully
-        console.log('Review acquired successfully', data);
-        // You might want to redirect the user or show a success message
+        setReviewData(data); // Set the review data
+        setError(null);
       } else {
-        // Handle error response
-        console.error('Failed to acquire review');
+        const errorData = await response.json();
+        setError(`Failed to acquire review. Status: ${response.status}, Error: ${errorData.message}`);
+        setReviewData(null); // Set null in case of error
       }
     } catch (error) {
-      // Handle network error or other issues
-      console.error('Error acquiring review:', error.message);
+      setError(`Error acquiring review: ${error.message}`);
+      setReviewData(null); // Set null in case of error
     }
   };
 
@@ -46,6 +46,33 @@ const GetReviewByID = () => {
           Get Review By ID
         </button>
       </form>
+
+      {error ? (
+        <div>
+          <h3>Error:</h3>
+          <p>{error}</p>
+        </div>
+      ) : (
+        reviewData && (
+          <div>
+            <h3>Review Data:</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Review ID</th>
+                  {/* Add more details as needed */}
+                </tr>
+              </thead>
+              <tbody>
+                <tr key={reviewData.review_id}>
+                  <td>{reviewData.review_id}</td>
+                  {/* Add more details as needed */}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
     </div>
   );
 };

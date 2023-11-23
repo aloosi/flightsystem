@@ -1,0 +1,29 @@
+.options {
+    background-color: #c8c8c8; /* Set your desired background color */
+    padding: 15px; /* Increased padding for better spacing */
+    text-align: center;
+}
+
+.app-ul {
+    list-style-type: none;
+    margin: 0px 20px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .app-li {
+    margin: 0 20px 0; /* Increased margin for better spacing */
+  }
+  
+  a {
+    text-decoration: none;
+    color: #000000; /* Set your desired text color */
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
+  
+  a:hover {
+    color: #ffcc00; /* Set your desired hover color */
+  }

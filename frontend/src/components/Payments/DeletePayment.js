@@ -6,6 +6,8 @@ const DeletePayment = () => {
   const [formData, setFormData] = useState({
     payment_id: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleDeletePayment = async () => {
     try {
@@ -20,14 +22,17 @@ const DeletePayment = () => {
       if (response.ok) {
         // Payment deleted successfully
         console.log('Payment deleted successfully');
+        setMessage('Payment deleted successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to delete payment');
+        setMessage('Failed to delete payment');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error deleting payment:', error.message);
+      setMessage('Error deleting payment:', error.message);
     }
   };
 
@@ -46,6 +51,8 @@ const DeletePayment = () => {
           Delete Payment
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

@@ -13,6 +13,8 @@ const UpdateFlight = () => {
     flight_class: '',
     flight_cost: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleUpdateFlight = async () => {
     try {
@@ -27,14 +29,17 @@ const UpdateFlight = () => {
       if (response.ok) {
         // Flight updated successfully
         console.log('Flight updated successfully');
+        setMessage('Flight updated successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to update flight');
+        setMessage('Failed to update flight');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error updating flight:', error.message);
+      setMessage('Error updating flight:', error.message);
     }
   };
 
@@ -115,6 +120,8 @@ const UpdateFlight = () => {
           Update Flight
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

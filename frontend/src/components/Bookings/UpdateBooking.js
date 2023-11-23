@@ -8,6 +8,8 @@ const UpdateBooking = () => {
     payment_id: '',
     booking_date: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleUpdateBooking = async () => {
     try {
@@ -22,14 +24,17 @@ const UpdateBooking = () => {
       if (response.ok) {
         // Booking updated successfully
         console.log('Booking updated successfully');
+        setMessage('Booking updated successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to update booking');
+        setMessage('Failed to update booking');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error updating booking:', error.message);
+      setMessage('Error updating booking:', error.message);
     }
   };
 
@@ -75,6 +80,8 @@ const UpdateBooking = () => {
           Create Booking
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

@@ -7,6 +7,8 @@ const UpdatePayment = () => {
     processing_fees: '',
     payment_status: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleUpdatePayment = async () => {
     try {
@@ -21,14 +23,17 @@ const UpdatePayment = () => {
       if (response.ok) {
         // Payment updated successfully
         console.log('Payment updated successfully');
+        setMessage('Payment updated successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to update payment');
+        setMessage('Failed to update payment');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error updating payment:', error.message);
+      setMessage('Error updating payment:', error.message);
     }
   };
 
@@ -65,6 +70,8 @@ const UpdatePayment = () => {
           Update Payment
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

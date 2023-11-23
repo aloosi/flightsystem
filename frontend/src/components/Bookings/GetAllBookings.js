@@ -1,15 +1,12 @@
-// GetAllBookings.js
-
 import React, { useState } from 'react';
 
 const GetAllBookings = () => {
-  const [formData, setFormData] = useState({
-    booking_id: '',
-  });
+  const [bookingsData, setBookingsData] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleGetAllBookings = async () => {
     try {
-      const response = await fetch('http://3.134.76.216:8080/get-all-bookings',{
+      const response = await fetch('http://3.134.76.216:8080/get-all-bookings', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -18,27 +15,60 @@ const GetAllBookings = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Booking deleted successfully
-        console.log('bookings acquired successfully', data);
-        // You might want to redirect the user or show a success message
+        setBookingsData(data); // Set the bookings data directly
+        setError(null);
       } else {
-        // Handle error response
-        console.error('Failed to acquire bookings');
+        const errorData = await response.json();
+        setError(`Failed to acquire bookings. Status: ${response.status}, Error: ${errorData.message}`);
+        setBookingsData([]); // Set empty array in case of error
       }
     } catch (error) {
-      // Handle network error or other issues
-      console.error('Error acquiring bookings:', error.message);
+      setError(`Error acquiring bookings: ${error.message}`);
+      setBookingsData([]); // Set empty array in case of error
     }
   };
 
   return (
     <div>
-      <h2>Get All bookings</h2>
+      <h2>Get All Bookings</h2>
       <form>
         <button type="button" onClick={handleGetAllBookings}>
-          Get All bookings
+          Get All Bookings
         </button>
       </form>
+
+      {error ? (
+        <div>
+          <h3>Error:</h3>
+          <p>{error}</p>
+        </div>
+      ) : (
+        bookingsData.length > 0 && (
+          <div>
+            <h3>Bookings Data:</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Flight ID</th>
+                  <th>Tourist ID</th>
+                  {/* Add more columns as needed */}
+                </tr>
+              </thead>
+              <tbody>
+                {bookingsData.map((booking) => (
+                  <tr key={booking.booking_id}>
+                    <td>{booking.booking_id}</td>
+                    <td>{booking.flight_id}</td>
+                    <td>{booking.tourist_id}</td>
+                    {/* Add more cells for additional data */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
     </div>
   );
 };

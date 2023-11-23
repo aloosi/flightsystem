@@ -6,6 +6,7 @@ const DeleteBooking = () => {
   const [formData, setFormData] = useState({
     booking_id: '',
   });
+  const [message, setMessage] = useState(null);
 
   const handleDeleteBooking = async () => {
     try {
@@ -20,14 +21,17 @@ const DeleteBooking = () => {
       if (response.ok) {
         // Booking deleted successfully
         console.log('Booking deleted successfully');
+        setMessage('Booking deleted successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to delete booking');
+        setMessage('Failed to delete booking');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error deleting booking:', error.message);
+      setMessage('Error deleting booking:', error.message);
     }
   };
 
@@ -46,6 +50,8 @@ const DeleteBooking = () => {
           Delete Booking
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

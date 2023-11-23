@@ -8,6 +8,7 @@ const CreateBooking = () => {
     payment_id: '',
     booking_date: '',
   });
+  const [message, setMessage] = useState(null);
 
   const handleCreateBooking = async () => {
     try {
@@ -24,16 +25,19 @@ const CreateBooking = () => {
       if (response.ok) {
         // Booking created successfully
         console.log('Booking created successfully');
+        setMessage('Booking created successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Log the response status and error message
         console.error('Failed to create booking. Status:', response.status);
         const errorData = await response.json();
         console.error('Error message:', errorData);
+        setMessage('Error message:', errorData);
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error creating booking:', error.message);
+      setMessage('Error creating booking:', error.message);
     }
   };
   
@@ -80,6 +84,8 @@ const CreateBooking = () => {
           Create Booking
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

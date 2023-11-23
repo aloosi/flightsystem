@@ -5,6 +5,8 @@ const CreateAirline = () => {
     airline_id: '',
     airline_name: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleCreateAirline = async () => {
     try {
@@ -21,16 +23,20 @@ const CreateAirline = () => {
       if (response.ok) {
         // Airline created successfully
         console.log('Airline created successfully');
+        setMessage('Airline created successfully');
+
         // You might want to redirect the user or show a success message
       } else {
         // Log the response status and error message
         console.error('Failed to create airline. Status:', response.status);
         const errorData = await response.json();
         console.error('Error message:', errorData);
+        setMessage('Error message:', errorData);
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error creating airline:', error.message);
+      setMessage('Error creating airline:', error.message);
     }
   };
   

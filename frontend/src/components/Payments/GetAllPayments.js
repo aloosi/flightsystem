@@ -1,15 +1,12 @@
-// GetAllPayments.js
-
 import React, { useState } from 'react';
 
 const GetAllPayments = () => {
-  const [formData, setFormData] = useState({
-    payment_id: '',
-  });
+  const [paymentData, setPaymentData] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleGetAllPayments = async () => {
     try {
-      const response = await fetch('http://3.134.76.216:8080/get-all-payment-methods',{
+      const response = await fetch('http://3.134.76.216:8080/get-all-payment-methods', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -18,27 +15,58 @@ const GetAllPayments = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Payment deleted successfully
-        console.log('payments acquired successfully', data);
-        // You might want to redirect the user or show a success message
+        setPaymentData(data); // Set the payment data directly
+        setError(null);
       } else {
-        // Handle error response
-        console.error('Failed to acquire payments');
+        const errorData = await response.json();
+        setError(`Failed to acquire payments. Status: ${response.status}, Error: ${errorData.message}`);
+        setPaymentData([]); // Set an empty array in case of error
       }
     } catch (error) {
-      // Handle network error or other issues
-      console.error('Error acquiring payments:', error.message);
+      setError(`Error acquiring payments: ${error.message}`);
+      setPaymentData([]); // Set an empty array in case of error
     }
   };
 
   return (
     <div>
-      <h2>Get All payments</h2>
+      <h2>Get All Payments</h2>
       <form>
         <button type="button" onClick={handleGetAllPayments}>
-          Get All payments
+          Get All Payments
         </button>
       </form>
+
+      {error ? (
+        <div>
+          <h3>Error:</h3>
+          <p>{error}</p>
+        </div>
+      ) : (
+        paymentData.length > 0 && (
+          <div>
+            <h3>Payment Data:</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Payment ID</th>
+                  <th>Payment Method</th>
+                  {/* Add more details as needed */}
+                </tr>
+              </thead>
+              <tbody>
+                {paymentData.map((payment) => (
+                  <tr key={payment.payment_id}>
+                    <td>{payment.payment_id}</td>
+                    <td>{payment.payment_method}</td>
+                    {/* Add more details as needed */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
     </div>
   );
 };

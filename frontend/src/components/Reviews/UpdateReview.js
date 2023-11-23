@@ -7,6 +7,8 @@ const UpdateReview = () => {
     tourist_id: '',
     flight_id: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleUpdateReview = async () => {
     try {
@@ -21,14 +23,17 @@ const UpdateReview = () => {
       if (response.ok) {
         // Review updated successfully
         console.log('Review updated successfully');
+        setMessage('Review updated successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to update review');
+        setMessage('Failed to update review');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error updating review:', error.message);
+      setMessage('Error updating review:', error.message);
     }
   };
 
@@ -67,6 +72,8 @@ const UpdateReview = () => {
           Update Review
         </button>
       </form>
+      <hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

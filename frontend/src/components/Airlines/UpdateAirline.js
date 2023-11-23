@@ -5,6 +5,7 @@ const UpdateAirline = () => {
     airline_id: '',
     airline_name: '',
   });
+  const [message, setMessage] = useState(null);
 
   const handleUpdateAirline = async () => {
     try {
@@ -19,14 +20,18 @@ const UpdateAirline = () => {
       if (response.ok) {
         // Airline updated successfully
         console.log('Airline updated successfully');
+        setMessage('Airline updated successfully');
+
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to update airline');
+        setMessage('Failed to update airline');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error updating airline:', error.message);
+      setMessage('Error updating airline:', error.message);
     }
   };
 

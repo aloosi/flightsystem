@@ -7,6 +7,8 @@ const CreateReview = () => {
     tourist_id: '',
     flight_id: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleCreateReview = async () => {
     try {
@@ -23,16 +25,19 @@ const CreateReview = () => {
       if (response.ok) {
         // Review created successfully
         console.log('Review created successfully');
+        setMessage('Review created successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Log the response status and error message
         console.error('Failed to create review. Status:', response.status);
         const errorData = await response.json();
         console.error('Error message:', errorData);
+        setMessage('Error message:', errorData);
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error creating review:', error.message);
+      setMessage('Error creating review:', error.message);
     }
   };
   
@@ -73,6 +78,8 @@ const CreateReview = () => {
           Create Review
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

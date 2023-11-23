@@ -1,15 +1,15 @@
-// GetAirlineByID.js
-
 import React, { useState } from 'react';
 
 const GetAirlineByID = () => {
   const [formData, setFormData] = useState({
     airline_id: '',
   });
+  const [airlineData, setAirlineData] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleGetAirlineByID = async () => {
     try {
-      const response = await fetch('http://3.134.76.216:8080/get-airline-by-id/' + formData.airline_id,{
+      const response = await fetch(`http://3.134.76.216:8080/get-airline-by-id/${formData.airline_id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -18,16 +18,16 @@ const GetAirlineByID = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Airline deleted successfully
-        console.log('Airline acquired successfully', data);
-        // You might want to redirect the user or show a success message
+        setAirlineData([data]); // Wrap the data in an array to match the structure of GetAllAirlines
+        setError(null);
       } else {
-        // Handle error response
-        console.error('Failed to acquire airline');
+        const errorData = await response.json();
+        setError(`Failed to acquire airline. Status: ${response.status}, Error: ${errorData.message}`);
+        setAirlineData([]);
       }
     } catch (error) {
-      // Handle network error or other issues
-      console.error('Error acquiring airline:', error.message);
+      setError(`Error acquiring airline: ${error.message}`);
+      setAirlineData([]);
     }
   };
 
@@ -39,13 +39,45 @@ const GetAirlineByID = () => {
         <input
           type="text"
           value={formData.airline_id}
-          onChange={(e) => setFormData({ ...formData, airline_id: parseInt(e.target.value, 10) || 0 })}
+          onChange={(e) => setFormData({ ...formData, airline_id: parseInt(e.target.value, 10) || '' })}
         />
 
         <button type="button" onClick={handleGetAirlineByID}>
           Get Airline By ID
         </button>
       </form>
+<hr />
+
+      {error ? (
+        <div>
+          <h3>Error:</h3>
+          <p>{error}</p>
+        </div>
+      ) : (
+        airlineData.length > 0 && (
+          <div>
+            <h3>Airline Data:</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Airline ID</th>
+                  <th>Airline Name</th>
+                  {/* Add more columns as needed */}
+                </tr>
+              </thead>
+              <tbody>
+                {airlineData.map((airline) => (
+                  <tr key={airline.airline_id}>
+                    <td>{airline.airline_id}</td>
+                    <td>{airline.airline_name}</td>
+                    {/* Add more cells for additional data */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
     </div>
   );
 };

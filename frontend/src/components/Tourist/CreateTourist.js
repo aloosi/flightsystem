@@ -9,6 +9,7 @@ const CreateTourist = () => {
     tourist_last_name: '',
     tourist_email: '',
   });
+  const [message, setMessage] = useState(null);
 
   const handleCreateTourist = async () => {
     try {
@@ -23,14 +24,19 @@ const CreateTourist = () => {
       if (response.ok) {
         // Tourist created successfully
         console.log('Tourist created successfully');
+        setMessage('Tourist created successfully');
+
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to create tourist');
+        setMessage('Failed to create tourist');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error creating tourist:', error.message);
+      setMessage('Error creating tourist:', error.message);
+
     }
   };
 
@@ -69,6 +75,8 @@ const CreateTourist = () => {
           Create Tourist
         </button>
       </form>
+      <hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

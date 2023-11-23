@@ -6,6 +6,8 @@ const DeleteFlight = () => {
   const [formData, setFormData] = useState({
     flight_id: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleDeleteFlight = async () => {
     try {
@@ -20,14 +22,17 @@ const DeleteFlight = () => {
       if (response.ok) {
         // Flight deleted successfully
         console.log('Flight deleted successfully');
+        setMessage('Flight deleted successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to delete flight');
+        setMessage('Failed to delete flight');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error deleting flight:', error.message);
+      setMessage('Error deleting flight:', error.message);
     }
   };
 
@@ -46,6 +51,8 @@ const DeleteFlight = () => {
           Delete Flight
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

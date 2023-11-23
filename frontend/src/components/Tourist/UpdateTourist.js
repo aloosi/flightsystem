@@ -10,6 +10,7 @@ const UpdateTourist = () => {
     tourist_email: '',
     // Add more fields as needed
   });
+  const [message, setMessage] = useState(null);
 
   const handleUpdateTourist = async () => {
     try {
@@ -24,14 +25,19 @@ const UpdateTourist = () => {
       if (response.ok) {
         // Tourist updated successfully
         console.log('Tourist updated successfully');
+        setMessage('Tourist updated successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to update tourist');
+        setMessage('Failed to update tourist');
+
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error updating tourist:', error.message);
+      setMessage('Error updating tourist:', error.message);
+
     }
   };
 
@@ -73,7 +79,9 @@ const UpdateTourist = () => {
         <button type="button" onClick={handleUpdateTourist}>
           Update Tourist
         </button>
-      </form>
+        </form>
+      <hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

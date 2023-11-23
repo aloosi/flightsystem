@@ -1,5 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
+
+import Navbar from './components/Navbar/Navbar';
+import Home from './pages/Home';
+import TableFunctions from './pages/TableFunctions';
+import TouristQueries from './pages/TouristQueries';
+import AirlineQueries from './pages/AirlineQueries';
+import FlightQueries from './pages/FlightQueries';
+import BookingQueries from './pages/BookingQueries';
+import PaymentQueries from './pages/PaymentQueries';
+import ReviewQueries from './pages/ReviewQueries';
+
+import DeleteTables from './components/Tables/DeleteTables';
+import CreateTables from './components/Tables/CreateTables';
+import PopulateTables from './components/Tables/PopulateTables';
+
 import CreateTourist from './components/Tourist/CreateTourist';
 import DeleteTourist from './components/Tourist/DeleteTourist';
 import GetAllTourists from './components/Tourist/GetAllTourists';
@@ -38,188 +53,62 @@ import UpdatePayment from './components/Payments/UpdatePayment';
 
 const App = () => {
   return (
+    <>
     <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/tourist/create-tourist">Create Tourist</Link>
-              <Link to="/tourist/delete-tourist">Delete Tourist</Link>
-              <Link to="/tourist/get-all-tourists">Get All Tourists</Link>
-              <Link to="/tourist/get-tourist-by-id">Get Tourist By ID</Link>
-              <Link to="/tourist/update-tourist">Update Tourist</Link>
+      <Navbar> </Navbar>
+      <Routes>
+        <Route path='*' element={<Home />} />
+        <Route path='tablefunctions/*' element={ <TableFunctions />} />
+        <Route path='touristqueries/*' element={ <TouristQueries />} />
+        <Route path='airlinequeries/*' element={ <AirlineQueries />} />
+        <Route path='flightqueries/*' element={ <FlightQueries />} />
+        <Route path='bookingqueries/*' element={ <BookingQueries />} />
+        <Route path='paymentqueries/*' element={ <PaymentQueries />} />
+        <Route path='reviewqueries/*' element={ <ReviewQueries />} />
 
+        <Route path="/tablefunctions/delete-tables" element={<DeleteTables />} />
+        <Route path="/tablefunctions/create-tables" element={<CreateTables />} />
+        <Route path="/tablefunctions/populate-tables" element={<PopulateTables />} />
 
-            </li>
-            {/* Add links for other CRUD operations */}
-          </ul>
-        </nav>
+        <Route path="/touristqueries/create-tourist" element={<CreateTourist />} />
+        <Route path="/touristqueries/delete-tourist" element={<DeleteTourist />} />
+        <Route path="/touristqueries/get-all-tourists" element={<GetAllTourists />} />
+        <Route path="/touristqueries/get-tourist-by-id" element={<GetTouristByID />} />
+        <Route path="/touristqueries/update-tourist" element={<UpdateTourist />} />
 
-        <hr />
-        <Routes>
-        <Route path="/tourist/create-tourist" element={<CreateTourist />} />
-        <Route path="/tourist/delete-tourist" element={<DeleteTourist />} />
-        <Route path="/tourist/get-all-tourists" element={<GetAllTourists />} />
-        <Route path="/tourist/get-tourist-by-id" element={<GetTouristByID />} />
-        <Route path="/tourist/update-tourist" element={<UpdateTourist />} />
+        <Route path="/airlinequeries/create-airline" element={<CreateAirline />} />
+        <Route path="/airlinequeries/delete-airline" element={<DeleteAirline />} />
+        <Route path="/airlinequeries/get-all-airlines" element={<GetAllAirlines />} />
+        <Route path="/airlinequeries/get-airline-by-id" element={<GetAirlineByID />} />
+        <Route path="/airlinequeries/update-airline" element={<UpdateAirline />} />
 
+        <Route path="/flightqueries/create-flight" element={<CreateFlight />} />
+        <Route path="/flightqueries/delete-flight" element={<DeleteFlight />} />
+        <Route path="/flightqueries/get-all-flights" element={<GetAllFlights />} />
+        <Route path="/flightqueries/get-flight-by-id" element={<GetFlightByID />} />
+        <Route path="/flightqueries/update-flight" element={<UpdateFlight />} />
 
+        <Route path="/bookingqueries/create-booking" element={<CreateBooking />} />
+        <Route path="/bookingqueries/delete-booking" element={<DeleteBooking />} />
+        <Route path="/bookingqueries/get-all-bookings" element={<GetAllBookings />} />
+        <Route path="/bookingqueries/get-booking-by-id" element={<GetBookingByID />} />
+        <Route path="/bookingqueries/update-booking" element={<UpdateBooking />} />
 
-        {/* Add routes for other CRUD operations */}
-        </Routes>
-      </div>
+        <Route path="/reviewqueries/create-review" element={<CreateReview />} />
+        <Route path="/reviewqueries/delete-review" element={<DeleteReview />} />
+        <Route path="/reviewqueries/get-all-reviews" element={<GetAllReviews />} />
+        <Route path="/reviewqueries/get-review-by-id" element={<GetReviewByID />} />
+        <Route path="/reviewqueries/update-review" element={<UpdateReview />} />
 
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/flights/create-flight">Create Flight</Link>
-              <Link to="/flights/delete-flight">Delete Flight</Link>
-              <Link to="/flights/get-all-flights">Get All Flights</Link>
-              <Link to="/flights/get-flight-by-id">Get Flight By ID</Link>
-              <Link to="/flights/update-flight">Update Flight</Link>
-
-
-            </li>
-            {/* Add links for other CRUD operations */}
-          </ul>
-        </nav>
-
-        <hr />
-        <Routes>
-        <Route path="/flights/create-flight" element={<CreateFlight />} />
-        <Route path="/flights/delete-flight" element={<DeleteFlight />} />
-        <Route path="/flights/get-all-flights" element={<GetAllFlights />} />
-        <Route path="/flights/get-flight-by-id" element={<GetFlightByID />} />
-        <Route path="/flights/update-flight" element={<UpdateFlight />} />
-
-
-
-        {/* Add routes for other CRUD operations */}
-        </Routes>
-        </div>
-        <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/airlines/create-airline">Create Airline</Link>
-              <Link to="/airlines/delete-airline">Delete Airline</Link>
-              <Link to="/airlines/get-all-airlines">Get All Airlines</Link>
-              <Link to="/airlines/get-airline-by-id">Get Airline By ID</Link>
-              <Link to="/airlines/update-airline">Update Airline</Link>
-
-
-            </li>
-            {/* Add links for other CRUD operations */}
-          </ul>
-        </nav>
-
-        <hr />
-        <Routes>
-        <Route path="/airlines/create-airline" element={<CreateAirline />} />
-        <Route path="/airlines/delete-airline" element={<DeleteAirline />} />
-        <Route path="/airlines/get-all-airlines" element={<GetAllAirlines />} />
-        <Route path="/airlines/get-airline-by-id" element={<GetAirlineByID />} />
-        <Route path="/airlines/update-airline" element={<UpdateAirline />} />
-
-
-
-        {/* Add routes for other CRUD operations */}
-        </Routes>
-      </div>
-
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/bookings/create-booking">Create Booking</Link>
-              <Link to="/bookings/delete-booking">Delete Booking</Link>
-              <Link to="/bookings/get-all-bookings">Get All Bookings</Link>
-              <Link to="/bookings/get-booking-by-id">Get Booking By ID</Link>
-              <Link to="/bookings/update-booking">Update Booking</Link>
-
-
-            </li>
-            {/* Add links for other CRUD operations */}
-          </ul>
-        </nav>
-
-        <hr />
-        <Routes>
-        <Route path="/bookings/create-booking" element={<CreateBooking />} />
-        <Route path="/bookings/delete-booking" element={<DeleteBooking />} />
-        <Route path="/bookings/get-all-bookings" element={<GetAllBookings />} />
-        <Route path="/bookings/get-booking-by-id" element={<GetBookingByID />} />
-        <Route path="/bookings/update-booking" element={<UpdateBooking />} />
-
-
-
-        {/* Add routes for other CRUD operations */}
-        </Routes>
-      </div>
-
-
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/reviews/create-review">Create Review</Link>
-              <Link to="/reviews/delete-review">Delete Review</Link>
-              <Link to="/reviews/get-all-reviews">Get All Reviews</Link>
-              <Link to="/reviews/get-review-by-id">Get Review By ID</Link>
-              <Link to="/reviews/update-review">Update Review</Link>
-
-
-            </li>
-            {/* Add links for other CRUD operations */}
-          </ul>
-        </nav>
-
-        <hr />
-        <Routes>
-        <Route path="/reviews/create-review" element={<CreateReview />} />
-        <Route path="/reviews/delete-review" element={<DeleteReview />} />
-        <Route path="/reviews/get-all-reviews" element={<GetAllReviews />} />
-        <Route path="/reviews/get-review-by-id" element={<GetReviewByID />} />
-        <Route path="/reviews/update-review" element={<UpdateReview />} />
-
-
-
-        {/* Add routes for other CRUD operations */}
-        </Routes>
-      </div>
-
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/payments/create-payment">Create Payment</Link>
-              <Link to="/payments/delete-payment">Delete Payment</Link>
-              <Link to="/payments/get-all-payments">Get All Payments</Link>
-              <Link to="/payments/get-payment-by-id">Get Payment By ID</Link>
-              <Link to="/payments/update-payment">Update Payment</Link>
-
-
-            </li>
-            {/* Add links for other CRUD operations */}
-          </ul>
-        </nav>
-
-        <hr />
-        <Routes>
-        <Route path="/payments/create-payment" element={<CreatePayment />} />
-        <Route path="/payments/delete-payment" element={<DeletePayment />} />
-        <Route path="/payments/get-all-payments" element={<GetAllPayments />} />
-        <Route path="/payments/get-payment-by-id" element={<GetPaymentByID />} />
-        <Route path="/payments/update-payment" element={<UpdatePayment />} />
-
-
-
-        {/* Add routes for other CRUD operations */}
-        </Routes>
-      </div>
+        <Route path="/paymentqueries/create-payment" element={<CreatePayment />} />
+        <Route path="/paymentqueries/delete-payment" element={<DeletePayment />} />
+        <Route path="/paymentqueries/get-all-payments" element={<GetAllPayments />} />
+        <Route path="/paymentqueries/get-payment-by-id" element={<GetPaymentByID />} />
+        <Route path="/paymentqueries/update-payment" element={<UpdatePayment />} />
+      </Routes>
     </Router>
+    </>
   );
-};
+}
 
 export default App;

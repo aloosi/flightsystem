@@ -6,6 +6,7 @@ const DeleteAirline = () => {
   const [formData, setFormData] = useState({
     airline_id: '',
   });
+  const [message, setMessage] = useState(null);
 
   const handleDeleteAirline = async () => {
     try {
@@ -20,14 +21,17 @@ const DeleteAirline = () => {
       if (response.ok) {
         // Airline deleted successfully
         console.log('Airline deleted successfully');
+        setMessage('Airline deleted successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to delete airline');
+        setMessage('Failed to delete airline');
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error deleting airline:', error.message);
+      setMessage('Error deleting airline:', error.message);
     }
   };
 

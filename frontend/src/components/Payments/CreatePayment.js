@@ -7,6 +7,8 @@ const CreatePayment = () => {
     processing_fees: '',
     payment_status: '',
   });
+  const [message, setMessage] = useState(null);
+
 
   const handleCreatePayment = async () => {
     try {
@@ -23,12 +25,15 @@ const CreatePayment = () => {
       if (response.ok) {
         // Payment created successfully
         console.log('Payment created successfully');
+        setMessage('Payment created successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Log the response status and error message
         console.error('Failed to create payment. Status:', response.status);
+        setMessage('Failed to create payment. Status:', response.status);
         const errorData = await response.json();
         console.error('Error message:', errorData);
+        setMessage('Error message:', errorData);
       }
     } catch (error) {
       // Handle network error or other issues
@@ -70,6 +75,8 @@ const CreatePayment = () => {
           Create Payment
         </button>
       </form>
+<hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };

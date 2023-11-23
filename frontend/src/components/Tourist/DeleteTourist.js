@@ -6,6 +6,7 @@ const DeleteTourist = () => {
   const [formData, setFormData] = useState({
     tourist_id: '',
   });
+  const [message, setMessage] = useState(null);
 
   const handleDeleteTourist = async () => {
     try {
@@ -20,14 +21,18 @@ const DeleteTourist = () => {
       if (response.ok) {
         // Tourist deleted successfully
         console.log('Tourist deleted successfully');
+        setMessage('Tourist deleted successfully');
         // You might want to redirect the user or show a success message
       } else {
         // Handle error response
         console.error('Failed to delete tourist');
+        setMessage('Failed to delete tourist');
+
       }
     } catch (error) {
       // Handle network error or other issues
       console.error('Error deleting tourist:', error.message);
+      setMessage('Error deleting tourist:', error.message);
     }
   };
 
@@ -46,6 +51,8 @@ const DeleteTourist = () => {
           Delete Tourist
         </button>
       </form>
+      <hr />
+      {message && <p>{message}</p>}
     </div>
   );
 };
