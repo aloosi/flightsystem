@@ -204,6 +204,19 @@ func main() {
 	r.PUT("/update-review", updateReviewHandler)
 	r.DELETE("/delete-review/:review_id", deleteReviewHandler)
 
+	deleteAllTablesHandler := func(c *gin.Context) {
+		DeleteAllTablesHandler(c, db)
+	}
+	createTablesHandler := func(c *gin.Context) {
+		CreateTablesHandler(c, db)
+	}
+	populateTablesHandler := func(c *gin.Context) {
+		PopulateTablesHandler(c, db)
+	}
+	r.GET("/delete-all-tables", deleteAllTablesHandler)
+	r.GET("/create-tables", createTablesHandler)
+	r.GET("/populate-tables", populateTablesHandler)
+
 	// Start the HTTP server with error handling
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {
