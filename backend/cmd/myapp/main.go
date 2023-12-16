@@ -16,7 +16,7 @@ var db *sql.DB
 func init() {
 	// Initialize the Oracle database connection
 	var err error
-	db, err = sql.Open("godror", "admin/Alpaca!1@flight-system.cgaeqxpmrjpp.us-east-2.rds.amazonaws.com:1521/ORCL")
+	db, err = sql.Open("godror", "${DB_STRING}")
 	if err != nil {
 		log.Fatal(err)
 	}
