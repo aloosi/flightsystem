@@ -32,7 +32,7 @@ func init() {
 
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 		if c.Request.Method == "OPTIONS" {
@@ -51,7 +51,7 @@ func main() {
 	r.Use(CORSMiddleware())
 
 	// Connection string format: user/password@host:port/service_name
-	connectionString := "admin/Alpaca!1@flight-system.cgaeqxpmrjpp.us-east-2.rds.amazonaws.com:1521/ORCL"
+	connectionString := "${DB_STRING}"
 
 	// Open a connection to the Oracle database
 	db, err := sql.Open("godror", connectionString)
